@@ -1,0 +1,64 @@
+{{ form_start(form) }}
+{{ form_row(form.title) }}
+{{ form_row(form.publishedAt) }}
+{{ form_row(form.description) }}
+{{ form_row(form.time) }}
+{{ form_row(form.image) }}
+{{ form_row(form.isPublished) }}
+{# the data-index attribute is required for the JavaScript code below #}
+<button type="button" class="add_item_link" data-collection-holder-class="recipeIngredients">Add a recipeIngredient
+</button>
+<ul class="recipeIngredients"
+    data-index="{{ form.recipeIngredients|length > 0 ? form.recipeIngredients|last.vars.name + 1 : 0 }}"
+    data-prototype="{{ form_widget(form.recipeIngredients.vars.prototype)|e('html_attr') }}"
+></ul>
+<button class="btn">{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
+{% block bottom_javascripts %}
+    <script>
+        document
+            .querySelectorAll('ul.recipeIngredients li')
+            .forEach((recipeIngredient) => {
+                addRecipeIngredientFormDeleteLink(recipeIngredient)
+            });
+
+        document
+            .querySelectorAll('.add_item_link')
+            .forEach(btn => {
+                btn.addEventListener("click", addFormToCollection)
+            });
+
+        function addFormToCollection(e) {
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+
+            addRecipeIngredientFormDeleteLink(item);
+        }
+
+        function addRecipeIngredientFormDeleteLink(item) {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.innerText = 'Delete this recipe ingredient';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // remove the li for the recipeIngredient form
+                item.remove();
+            });
+        }
+    </script>
+{% endblock %}
