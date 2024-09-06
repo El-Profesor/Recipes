@@ -11,7 +11,13 @@
 <ul class="recipeIngredients"
     data-index="{{ form.recipeIngredients|length > 0 ? form.recipeIngredients|last.vars.name + 1 : 0 }}"
     data-prototype="{{ form_widget(form.recipeIngredients.vars.prototype)|e('html_attr') }}"
-></ul>
+>
+    {% for recipeIngredientForm in  form.recipeIngredients %}
+    <li>
+        {{ form_widget(recipeIngredientForm) }}
+    </li>
+    {% endfor %}
+</ul>
 <button class="btn">{{ button_label|default('Save') }}</button>
 {{ form_end(form) }}
 {% block bottom_javascripts %}
